@@ -8,13 +8,16 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(leaflet)
+library(tidyverse)
 ```
 
 ## Map
 
 ```{r}
-data <- read.csv("WoolworthsLocations.csv")
+data <- read_csv("WoolworthsLocations.csv")
 
 map <- leaflet() %>% addTiles() %>% addCircleMarkers(lng = data$Long, lat = data$Lat, radius = 3)
+
+
 map
 ```
