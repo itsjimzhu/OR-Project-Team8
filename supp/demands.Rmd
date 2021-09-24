@@ -1,0 +1,58 @@
+---
+title: "Demands"
+author: "JZHU951 120683565"
+date: "9/23/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+## Avg demands
+
+```{r}
+demand <- read_csv("WoolworthsDemands.csv")
+dates <- as.character(colnames(demand))
+# dates <- as.Date(dates,"%Y-%m-%d")
+colnames(demand) <- dates
+
+
+demand <- demand %>% pivot_longer(-c("Store"), names_to = "date",values_to = "demand")
+
+demand$date <- as.Date(demand$date, format = "%m/%d/%Y")
+# meltdf <- melt(demand, id="Store")
+
+demand$type <- sapply(strsplit(demand$Store," "), `[`, 1)
+
+```
+
+Demand at each store and on each weekday (avg. over 4 weeks)
+
+```{r}
+demand2 <- read_csv("WoolworthsDemands.csv")
+colnames(demand2) <- dates
+
+
+demand2 <- demand2 %>% pivot_longer(-c("Store"), names_to = "date",values_to = "demand")
+
+demand2$date <- as.Date(demand2$date, format = "%m/%d/%Y")
+demand2$day <- weekdays(demand2$date)
+
+
+demand2 <- demand2 %>% group_by(Store,day) %>% summarise(mean(demand))
+demand2
+```
+
+Graphs
+
+```{r}
+# i'm colorblind
+cbPalette <- c("DarkGreen", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+
+ggplot(demand, aes(x=date,y=demand, color= type)) + geom_line() + geom_point(size=0.2) + facet_wrap(~Store) + theme_void() + labs( title = "Demand over time at each store") +   scale_colour_manual(values=cbPalette)
+
+ggplot(demand, aes(x=date,y=demand, color = type)) + geom_point(size=1) + theme_minimal() + geom_bar(stat = "summary", fill = NA, colour = "DarkOrchid4") + labs( title = "Demand across all stores and mean demand per day") +   scale_colour_manual(values=cbPalette)
+
+```
