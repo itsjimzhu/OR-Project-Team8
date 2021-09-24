@@ -10,8 +10,7 @@ import pandas as pd
 
 def main():
 
-    # Creating a matrix of possible length 3 routes in a region of N stores.
-	# The matrix should have N rows and nC3 columns
+
     pass
 
 def route(df):
@@ -36,8 +35,8 @@ def route(df):
     stores = df[['Store']]
 
     # Columns for combos of three stores.
-    n = 11
-    k = 3
+    n = 9
+    k = 4
     routes = np.array(
         [
             [1 if i in comb else 0 for i in range(n)]
@@ -52,11 +51,14 @@ def route(df):
 
     return stores
 
+def costs(routes):
+
+    pass
 
 if __name__ == "__main__":
     N = 10
     df = pd.read_csv("WoolworthsLocations.csv")
-    df1 = df.loc[0:10,:]
+    df1 = df.loc[0:8,:]
     routes = route(df1)
     pass
     # TODO
