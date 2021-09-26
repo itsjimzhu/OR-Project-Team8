@@ -68,9 +68,9 @@ def costs(routes,locations, demands, times):
 			
 		Returns
 		-------
-		times :     Dataframe of time cost of each route, or 999999 if route is infeasible due to demand.
+		times :     numpy array of time cost of each route, or 999999 if route is infeasible due to demand.
 
-		routes : 	Modified dataframe of routes
+		routes : 	Modified dataframe of routes to reflect new routes
 	"""	
 
 	# Initial costs vector, first col is index 
@@ -78,10 +78,31 @@ def costs(routes,locations, demands, times):
 	costs = np.zeros(nroutes-1)
 
 	# Loop through each route for demand constraint.
-	for i in range(nroutes):
+	for i in range(nroutes-1):
+
+		# get stores on the route
+		storesvec = pd.Series.to_numpy(routes.loc[:,i])
+		
+		demand = np.dot(storesvec, demands)
 
 		pass
+		
+		while (demand > 26):
 
+			# remove one store from that route. TODO implement logic, currently remove first alphabetical store.
+			for j in range(len(demands)):
+				if (storesvec[j] == 1):
+					storesvec[j] = 0
+					break
+			
+			demand = np.dot(storesvec, demands)
+			
+			
+		# Back to series lol, avoids SettingWithCopyWarning
+		series = pd.Series(storesvec)
+		routes[i] = series
+
+	# Loop through each loop for 
 	
 	return times, routes
 	
