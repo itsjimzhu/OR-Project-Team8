@@ -80,13 +80,11 @@ def costs(routes,locations, demands, times):
 	# Loop through each route for demand constraint.
 	for i in range(nroutes-1):
 
-		# get stores on the route
+		# get stores on the route, series -> np.array for SettingWithCopyWarning
 		storesvec = pd.Series.to_numpy(routes.loc[:,i])
 		
 		demand = np.dot(storesvec, demands)
 
-		pass
-		
 		while (demand > 26):
 
 			# remove one store from that route. TODO implement logic, currently remove first alphabetical store.
@@ -97,12 +95,13 @@ def costs(routes,locations, demands, times):
 			
 			demand = np.dot(storesvec, demands)
 			
-			
-		# Back to series lol, avoids SettingWithCopyWarning
+		# Back to series and overwites, avoids SettingWithCopyWarning
 		series = pd.Series(storesvec)
 		routes[i] = series
 
-	# Loop through each loop for 
+	# Loop through each loop for time calculation.
+	for i in range(nroutes-1):
+		pass
 	
 	return times, routes
 	
