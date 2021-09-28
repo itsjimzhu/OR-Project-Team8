@@ -56,5 +56,56 @@ def Kevin():
     # The optimised objective function value is printed to the screen
     print("Production Costs = ", value(prob.objective))
 
+def real(dataFrame):
+    """ interplate two extraction rates to find the total extraction rate, q.
+            Parameters:
+            -----------
+            dataFrame : pandas dataFrame
+                Independent variable.
+
+            Returns:
+            --------
+
+
+            Notes:
+            ------
+            The dataFrame format is:
+                                    R1,R2,R3,R4,R5
+
+            Store 1                 [1, 1, 1, 0, 1]
+            Store 2                 [0, 0, 1, 1, 0]
+            Store 3                 [1, 0, 0, 1, 1]
+            Store 4                 [0, 1, 1, 0, 1]
+            Time per Route          [100, 36, 57, 69]
+    """
+
+    prob = LpProblem("Time", LpMinimize)
+    vars = LpVariable.dicts("Route", dataFrame.columns, 0, None, 'Integer')
+    prob += lpSum([vars[i] * dataFrame[i][time] for i in dataFrame.columns]), "Time"
+
+    # route constraints
+    for i in dataFrame.index[:-2]:
+        prob += lpSum([vars[j] * dataFrame[j][i] for j in dataFrame.columns]) == 1
+
+    # truck constraint
+    prob += lpSum([vars[i] for i in dataFrame.columns]) <= 60
+
+    # The problem data is written to an .lp file
+    prob.writeLP("VehicleRoutingProblem. lp")
+
+    # The problem is solved using PuLP's choice of Solver
+    prob.solve()
+
+    # The status of the solution is printed to the screen
+    print("Status:", LpStatus[prob.status])
+
+    # Each of the variables is printed with it's resolved optimum value
+    for v in prob.variables():
+        print(v.name, "-", v.varValue)
+
+    # The optimised objective function value is printed to the screen
+    print("Production Costs = ", value(prob.objective))
+
+
 if __name__ == "__main__":
     Kevin()
