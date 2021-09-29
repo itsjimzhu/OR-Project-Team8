@@ -115,6 +115,7 @@ if __name__ == "__main__":
 	df = pd.read_csv("data" + os.sep + "WoolworthsLocations.csv")
 	times = pd.read_csv("data" + os.sep + "WoolworthsTravelDurations.csv")
 	demands = pd.read_csv("data" + os.sep + "WoolworthsDemands.csv")
+	areas = pd.read_csv("data" + os.sep + "WoolworthsLocationsDivisions.csv")
 
 	times1 = times.loc[0:8,:]
 	demand1 = demands.iloc[[0,1,2,3,4,5,6,7,8],[1]] 	# Substitute vector of simulated demands later
