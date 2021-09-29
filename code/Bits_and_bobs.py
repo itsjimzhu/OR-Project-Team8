@@ -9,3 +9,6 @@ import pandas as pd
 df = pd.read_csv('Name_of_data_file.csv')
 print(df.to_string()) 
 
+# Importing CSV files into NumPy array
+from numpy import genfromtxt
+my_data = genfromtxt('Name_of_data_file.csv', delimiter=',')
