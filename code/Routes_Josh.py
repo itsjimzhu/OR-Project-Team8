@@ -67,7 +67,31 @@ def CheckDemands(Routes, Demands):
 				Routes.drop(Route, inplace= True, axis = 1)
 
 	return Routes
+
+def Routes3D(Routes):
+	Routes.drop("Store", inplace=True,axis=1)
+	routesArray = Routes.to_numpy()
+	newRoutesArray = [Routes.to_numpy()]
+	'''just for testing code
+	routesArray = np.array([[1, 1, 0], [1, 0, 1], [0, 1, 1]])
+	newRoutesArray = np.array([[[1, 1, 0], [1, 0, 1], [0, 1, 1]]])'''
+
+	for i in range(newRoutesArray.shape[1]):
+			newRoutesArray[0][i] = newRoutesArray[0][i]*routesArray[0]
+
+	for h in range(1,len(routesArray)):
+		newRoutesArray = np.concatenate((newRoutesArray, [routesArray]))
+		for i in range(newRoutesArray.shape[1]):
+			newRoutesArray[h][i] = newRoutesArray[h][i]*routesArray[h]
 	
+	newRoutesArray = np.rot90(newRoutesArray, axes = (0,2))
+	newRoutesArray = newRoutesArray[::-1]
+
+	return newRoutesArray
+
+
+
+
 
 if __name__ == "__main__":
 	N = 7
@@ -87,5 +111,9 @@ if __name__ == "__main__":
 	AreaSouthDepo = AreaSouth.append(areas.loc[areas["Type"]=='Distribution Centre'])
 	mergedTimes = pd.merge(AreaSouthDepo, times, how = 'inner', on = 'Store')
 	SouthTimes = mergedTimes[AreaSouthDepo["Store"]]
+	NewRoutesSouth.loc[NewRoutesSouth.shape[0]] = \
+		['Distribution Centre Auckland'] + ([1] * (NewRoutesSouth.shape[1]-1))
+
+	Routes3D(NewRoutesSouth)
 	print('yes')
     
