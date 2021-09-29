@@ -83,6 +83,9 @@ if __name__ == "__main__":
 	RoutesSouth = route(AreaSouth, 4)
 	NewRoutesSouth = CheckDemands(RoutesSouth, DemandSouth)
 
-	times.rename(columns={'Unnamed: 0':'Store'}, inplace=True )
+	times.rename(columns={'Unnamed: 0':'Store'}, inplace=True)
+	AreaSouthDepo = AreaSouth.append(areas.loc[areas["Type"]=='Distribution Centre'])
+	mergedTimes = pd.merge(AreaSouthDepo, times, how = 'inner', on = 'Store')
+	SouthTimes = mergedTimes[AreaSouthDepo["Store"]]
 	print('yes')
     
