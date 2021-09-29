@@ -92,6 +92,11 @@ def Routes3D(Routes, columnNames):
 		newRoutesDf[h] = pd.DataFrame(newRoutesArray[h], index = columnNames, columns = columnNames)
 	return newRoutesDf
 
+def RouteWTimes(Routes,Times):
+	for key in Routes.keys():
+		Routes[key] = Routes[key]*Times
+	
+	return Routes
 
 
 
@@ -114,9 +119,15 @@ if __name__ == "__main__":
 	AreaSouthDepo = AreaSouth.append(areas.loc[areas["Type"]=='Distribution Centre'])
 	mergedTimes = pd.merge(AreaSouthDepo, times, how = 'inner', on = 'Store')
 	SouthTimes = mergedTimes[AreaSouthDepo["Store"]]
+
 	NewRoutesSouth.loc[NewRoutesSouth.shape[0]] = \
 		['Distribution Centre Auckland'] + ([1] * (NewRoutesSouth.shape[1]-1))
 
 	Routes3Ds = Routes3D(NewRoutesSouth, SouthTimes.columns)
+	SouthTimes['Store']=SouthTimes.columns
+	SouthTimes.set_index('Store', inplace = True)
+
+	TimedRoutes = RouteWTimes(Routes3Ds, SouthTimes)
+
 	print('yes')
     
