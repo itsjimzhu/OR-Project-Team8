@@ -68,10 +68,10 @@ def CheckDemands(Routes, Demands):
 
 	return Routes
 
-def Routes3D(Routes):
+def Routes3D(Routes, columnNames):
 	Routes.drop("Store", inplace=True,axis=1)
 	routesArray = Routes.to_numpy()
-	newRoutesArray = [Routes.to_numpy()]
+	newRoutesArray = np.array([Routes.to_numpy()])
 	'''just for testing code
 	routesArray = np.array([[1, 1, 0], [1, 0, 1], [0, 1, 1]])
 	newRoutesArray = np.array([[[1, 1, 0], [1, 0, 1], [0, 1, 1]]])'''
@@ -87,7 +87,10 @@ def Routes3D(Routes):
 	newRoutesArray = np.rot90(newRoutesArray, axes = (0,2))
 	newRoutesArray = newRoutesArray[::-1]
 
-	return newRoutesArray
+	newRoutesDf = {}
+	for h in range(newRoutesArray.shape[0]):
+		newRoutesDf[h] = pd.DataFrame(newRoutesArray[h], index = columnNames, columns = columnNames)
+	return newRoutesDf
 
 
 
@@ -114,6 +117,6 @@ if __name__ == "__main__":
 	NewRoutesSouth.loc[NewRoutesSouth.shape[0]] = \
 		['Distribution Centre Auckland'] + ([1] * (NewRoutesSouth.shape[1]-1))
 
-	Routes3D(NewRoutesSouth)
+	Routes3Ds = Routes3D(NewRoutesSouth, SouthTimes.columns)
 	print('yes')
     
