@@ -16,7 +16,9 @@ library(tidyverse)
 ```{r}
 data <- read_csv("WoolworthsLocations.csv")
 
-map <- leaflet() %>% addTiles() %>% addCircleMarkers(lng = data$Long, lat = data$Lat, radius = 3)
+pal <- colorFactor(palette = 'Dark2', domain = data$Type)
+
+map <- leaflet() %>% addTiles() %>% addCircleMarkers(lng = data$Long, lat = data$Lat, radius = 3, color = pal(data$Type), label = data$Store)
 
 
 map
