@@ -17,7 +17,7 @@ def route(df, k):
 		df : Pandas dataframe
 			Should contain read_csv data from Locations file of ten stores (changeable)
         k : integer
-                choose n choose k (where n is the number of stores)
+            choose n choose k (where n is the number of stores)
 			
 		Returns
 		-------
