@@ -5,7 +5,6 @@ from pulp import *
 import os
 
 
-
 def readDemands(col):
     """ Reads in demands from a csv file and return correct set.
             Parameters:
@@ -35,8 +34,11 @@ def readDemands(col):
     # convert col to pandas series, where key is storeNames
     # return series
 
-    return pd.read_csv("data" +os.sep +"DemandEstimation.csv")[:][col]
+    demands = pd.read_csv("data" + os.sep + "WoolworthsDemands.csv", index_col=0)
+    demands = demands["6/14/2021"]
+    return demands
 
+    #return pd.read_csv("data" +os.sep +"DemandEstimation.csv")[:][col]
 
 
 def selectRegion(region):
@@ -64,7 +66,7 @@ def selectRegion(region):
             Store 4      [0, 1, 1]
     """
 
-    areas = pd.read_csv("data" + os.sep + "WoolworthsLocationsDivisions.csv")
+    areas = pd.read_csv("data" + os.sep + "WoolworthsLocationsDivisions.csv", index_col=2)
 
     return areas[areas["Area"]==region]
 
@@ -94,10 +96,10 @@ def routeGeneration(region, choose):
             [[s1,s2], [s3,s4], [s1,s4], [s4,s5]]
         """
 
-    stores = region
+    stores = pd.DataFrame()
 
     # Columns for combos of three stores.
-    n = len(stores)
+    n = len(region.index)
 
     routes = np.array(
         [
@@ -113,8 +115,8 @@ def routeGeneration(region, choose):
 
     # Loop through each route and add as a column to the stores df
     for i in range(len(routes)):
-        copy = routes[i, :].T
-        stores.insert(len(stores.columns), "Route " + str(i), copy)
+        copy = pd.Series(routes[i, :].T, index=region.index)
+        stores.insert(i, "Route " + str(i), copy)
 
     return stores
 
@@ -136,31 +138,38 @@ def checkDemands(routes, demands):
                 series of storesNames according to a region
 
     """
+    demands = demands[routes.index]
+
     for route in routes:
-        if route != 'Store':
-            if routes[route].dot(demands) > 26:
-                routes.drop(route, inplace=True, axis=1)
+        if routes[route].dot(demands) > 26:
+            routes.drop(route, inplace=True, axis=1)
 
     return routes
 
 
-def routeNames():
+def routeLocations(routes):
     """ checks demands of a set of routes and removes all greater than limit.
             Parameters:
             -----------
-            route : list
-                combination of stores.
-
-            demands : int
-                Series of storesNames matched with a demand value.
+            route : Data Frame
+                routes stored as a dataframe.
 
 
             Returns:
             --------
-            flag : boolean
+            routeNames : 2D array
                 series of storesNames according to a region
 
     """
+    routeNames = []
+    for i in routes.columns:
+        temp = [j if routes[i][j] == 1 else 0 for j in routes.index]
+
+        temp = list(filter(lambda a: a != 0, temp))
+        routeNames.append(temp)
+
+
+    return routeNames
 
 
 def permutateRoute(route):
@@ -181,7 +190,7 @@ def permutateRoute(route):
             ------
 
     """
-    return it.Permutations(route)
+    return it.permutations(route)
 
 
 def costRoutes(route):
@@ -205,28 +214,32 @@ def costRoutes(route):
 
     """
     # insert distribution at start
-    route.insert(0, "Distribution Centre Auckland")
-    route.append("Distribution Centre Auckland")
+    route = ('Distribution Centre Auckland',) + route
+    route = route + ('Distribution Centre Auckland',)
 
     # read in data frame with storeName indexing
-    time = pd.read_csv("code" +os.sep +"data" +os.sep +"WoolworthsTravelDurations.csv")
-
-
+    time = pd.read_csv("data" +os.sep +"WoolworthsTravelDurations.csv", index_col=0)
     cost = 0
 
     # loop from 1 through length of route list
-    for location in route:
-        cost += time[location][location-1]
+    for i in range(1, len(route)):
+        cost += time[route[i]][route[i-1]]
 
     return cost
 
 
-def lp(dataFrame):
+def lp(routesFrame, timeFrame, i):
     """ interplate two extraction rates to find the total extraction rate, q.
             Parameters:
             -----------
             dataFrame : pandas dataFrame
                 Independent variable.
+
+            timeFrame : pandas dataFrame
+                Independent variable.
+
+            i: string
+                used to specify which region
 
             Returns:
             --------
@@ -245,15 +258,16 @@ def lp(dataFrame):
     """
 
     prob = LpProblem("Time", LpMinimize)
-    vars = LpVariable.dicts("Route", dataFrame.columns, 0, None, 'Integer')
-    prob += lpSum([vars[i] * dataFrame[i][time] for i in dataFrame.columns]), "Time"
+    vars = LpVariable.dicts(i, routesFrame.columns, 0, None, 'Integer')
+
+    prob += lpSum([vars[i] * timeFrame[i] for i in timeFrame.index]), "Time"
 
     # route constraints
-    for i in dataFrame.index[:-2]:
-        prob += lpSum([vars[j] * dataFrame[j][i] for j in dataFrame.columns]) == 1
+    for i in routesFrame.index:
+        prob += lpSum([vars[j] * routesFrame[j][i] for j in routesFrame.columns]) == 1
 
     # truck constraint
-    prob += lpSum([vars[i] for i in dataFrame.columns]) <= 60
+    prob += lpSum([vars[i] for i in routesFrame.columns]) <= 60
 
     # The problem data is written to an .lp file
     prob.writeLP("VehicleRoutingProblem. lp")
@@ -266,43 +280,56 @@ def lp(dataFrame):
 
     # Each of the variables is printed with it's resolved optimum value
     for v in prob.variables():
-        print(v.name, "-", v.varValue)
+        if (v.varValue != 0):
+            print(v.name, "-", v.varValue)
 
     # The optimised objective function value is printed to the screen
-    print("Production Costs = ", value(prob.objective))
+    print("Total Time = ", value(prob.objective))
 
 
 if __name__ == "__main__":
 
     #read in demands
     demands = readDemands(0)
-    demands = 0;
 
-    # instantiate lp dataframe
+    routeCons = pd.DataFrame()
+    timeCons = pd.DataFrame()
+
 
     # loop through each region
     regions = ["North", "City", "East", "South", "West", "NorthWest"]
     for i in regions:
-        storeNames = selectRegion(i)
+        region = selectRegion(i)
 
-        routes = routeGeneration(storeNames, 4)
+        routes = routeGeneration(region, 4)
         routes = checkDemands(routes, demands)
 
-        # convert routes to routeNames
+        routeNames = routeLocations(routes)
+
+        # cost vector
+        costV = []
 
         # loop through routes
-        for r in range(routeNames):
+        for r in routeNames:
             permutations = permutateRoute(r)
 
             cost = 9999999999
-            order = []
+
             #loop through permutations
-            for p in range(p):
-                if(costRoutes(p) < p):
-                    cost = costRoutes
+            for p in permutations:
+
+                test = costRoutes(p)
+                if(test < cost):
+                    cost = test
                     order = p
 
             # add new cost row to route for this route
+            costV.append(cost)
+
+        costs = pd.Series(costV,index=routes.columns)
+        #temp = pd.DataFrame({'Time': costs})
+
+        lp(routes, costs, i)
 
         # append to lp dataframe
 
