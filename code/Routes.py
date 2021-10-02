@@ -108,7 +108,7 @@ def vehicleRoutingProblem(demand, max):
     # output of total time
     print("\t cumulative total time for all regions", totalTime, " in seconds")
     print("\t Total cost of all routes", 225*totalTime/3600, "$")
-    return
+    returnyeah 
 
 
 def readDemands(col):
@@ -412,4 +412,4 @@ def routeSelection(routesFrame, timeFrame, region):
 
 
 if __name__ == "__main__":
-    vehicleRoutingProblem(0, 3)
+    vehicleRoutingProblem(0, 4)
