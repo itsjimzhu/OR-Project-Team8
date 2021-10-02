@@ -57,7 +57,7 @@ def vehicleRoutingProblem(demand, max):
             for p in permutations:
                 # find cost of permutation
                 # TODO add pallet unloading to costRoutes() function, 450 * number of pallets.
-                test = costRoutes(p)
+                test = costRoutes(p,demands)
 
                 # store lowest permutation and best order
                 if (test < cost):
@@ -107,6 +107,7 @@ def vehicleRoutingProblem(demand, max):
 
     # output of total time
     print("\t cumulative total time for all regions", totalTime, " in seconds")
+    print("\t Total cost of all routes", 225*totalTime/3600, "$")
     return
 
 
@@ -298,12 +299,14 @@ def permutateRoute(route):
     return it.permutations(route)
 
 
-def costRoutes(route):
+def costRoutes(route, demands):
     """ cost routes according to store order.
             Parameters:
             -----------
             route : tuple
                 combination of stores.
+            demands : 
+                Series of demand information
 
 
             Returns:
@@ -322,17 +325,27 @@ def costRoutes(route):
         <---------------------------->
                    continuum
     """
+    cost = 0
+
+    # Crate unloading time
+    for store in range(len(route)):
+        cost += 450 * demands[route[store]]
+
     # insert origin node at start and end
     route = ('Distribution Centre Auckland',) + route + ('Distribution Centre Auckland',)
 
     # read in time DataFrame with storeName indexing
     time = pd.read_csv("code" + os.sep + "data" +os.sep +"WoolworthsTravelDurations.csv", index_col=0)
 
-    cost = 0
     # loop from 1 through length of route list
     for i in range(1, len(route)):
         # add time between current and previous node
         cost += time[route[i]][route[i-1]]
+
+    # Can't have routes longer than 4 hours
+    # TODO: BUT - after implementing randomness we can allow for longer routes at greater cost.
+    if (cost > 14400):
+        cost = 99999
 
     return cost
 
@@ -392,8 +405,11 @@ def routeSelection(routesFrame, timeFrame, region):
     # The problem is solved using PuLP's choice of Solver, msg=0 to suppress output
     prob.solve(PULP_CBC_CMD(msg=0))
 
+    # TODO: 225$ cost per hour, BUT - after implementing randomness we can allow for longer routes at greater cost.
+    # Check the CostRoutes() function
+
     return prob
 
 
 if __name__ == "__main__":
-    vehicleRoutingProblem(0, 4)
+    vehicleRoutingProblem(0, 3)
