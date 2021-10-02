@@ -90,7 +90,7 @@ def vehicleRoutingProblem(demand, max):
                 bestTimes.append(costs.loc[str])
 
         # output regions solution
-        print(i, " ", check, '/', len(routes.index), "\ttotal time for region:", value(prob.objective))
+        print(i, " ", check, '/', len(routes.index), "\t cumulative total time for region:", value(prob.objective))
 
         # calculate total time
         totalTime += value(prob.objective)
@@ -105,7 +105,7 @@ def vehicleRoutingProblem(demand, max):
         cnt += 1
 
     # output of total time
-    print("The total time for all regions ", totalTime, " in seconds")
+    print("\t cumulative total time for all regions", totalTime, " in seconds")
     return
 
 
