@@ -56,6 +56,7 @@ def vehicleRoutingProblem(demand, max):
             # loop through permutations
             for p in permutations:
                 # find cost of permutation
+                # TODO add pallet unloading to costRoutes() function, 450 * number of pallets.
                 test = costRoutes(p)
 
                 # store lowest permutation and best order
