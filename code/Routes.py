@@ -29,7 +29,7 @@ def vehicleRoutingProblem(demand, max):
 
 
     # loop through each region
-    regions = ["North", "City", "East", "South", "West", "NorthWest"]
+    regions = ["North", "City", "East", "SouthEast", "South", "West", "NorthWest"]
     for i in regions:
         # select correct region
         region = selectRegion(i)
@@ -65,7 +65,6 @@ def vehicleRoutingProblem(demand, max):
             costV.append(cost)
             orderV.append(order)
 
-
         # convert vector to series
         mapping = pd.Series(orderV, index=routes.columns)
         costs = pd.Series(costV, index=routes.columns)
@@ -73,28 +72,33 @@ def vehicleRoutingProblem(demand, max):
         # select best combination of routes
         prob = routeSelection(routes, costs, i)
 
+        # loop through problem variables
         bestRegion = []
-
         for v in prob.variables():
             if (v.varValue != 0):
                 str = v.name.split("_", 1)[1].replace("_", " ")
                 bestRegion.append(str)
 
-        for i in range(len(bestRegion)):
-            bestRoutes.append(mapping.loc[bestRegion[i]])
+        # check to see each region is satisfied
+        check = 0
+        for k in range(len(bestRegion)):
+            check += 1 * len(mapping.loc[bestRegion[k]])
+            bestRoutes.append(mapping.loc[bestRegion[k]])
 
-        print(v.varValue)
+        print(i, " ", check, '/', len(routes.index), " time:", value(prob.objective))
+
+        # calculate total time
         totalTime += value(prob.objective)
 
-
-    count = 0
+    # nice output of routes
     for map in bestRoutes:
         for j in range(len(map)):
-            count += 1
             print(map[j], "-->", end=" ")
+        print("end")
 
-    print(totalTime)
-    print(count)
+    print("The total time is ", totalTime, " in seconds")
+
+    return
 
 def readDemands(col):
     """ Reads in demands from a csv file and return correct set.
@@ -386,7 +390,7 @@ def routeSelection(routesFrame, timeFrame, region):
     # prob.writeLP("VehicleRoutingProblem. lp")
 
     # The problem is solved using PuLP's choice of Solver
-    prob.solve()
+    prob.solve(PULP_CBC_CMD(msg=0))
 
     return prob
 
