@@ -22,11 +22,13 @@ def vehicleRoutingProblem(demand, max):
             ------
             This is a wrapper for all other functions in this file.
     """
-    # read in demands
-    demands = readDemands(demand)
+    # instantiation of tracking variables
     bestRoutes = []
+    bestTimes = []
     totalTime = 0
 
+    # read in demands
+    demands = readDemands(demand)
 
     # loop through each region
     regions = ["North", "City", "East", "SouthEast", "South", "West", "NorthWest"]
@@ -65,7 +67,7 @@ def vehicleRoutingProblem(demand, max):
             costV.append(cost)
             orderV.append(order)
 
-        # convert vector to series
+        # convert vectors to series
         mapping = pd.Series(orderV, index=routes.columns)
         costs = pd.Series(costV, index=routes.columns)
 
@@ -73,32 +75,39 @@ def vehicleRoutingProblem(demand, max):
         prob = routeSelection(routes, costs, i)
 
         # loop through problem variables
-        bestRegion = []
-        for v in prob.variables():
-            if (v.varValue != 0):
-                str = v.name.split("_", 1)[1].replace("_", " ")
-                bestRegion.append(str)
-
-        # check to see each region is satisfied
         check = 0
-        for k in range(len(bestRegion)):
-            check += 1 * len(mapping.loc[bestRegion[k]])
-            bestRoutes.append(mapping.loc[bestRegion[k]])
+        for v in prob.variables():
+            # only do used routes
+            if (v.varValue != 0):
+                # convert problem variable regions to correct index format
+                str = v.name.split("_", 1)[1].replace("_", " ")
 
-        print(i, " ", check, '/', len(routes.index), " time:", value(prob.objective))
+                # check each store is satisfied
+                check += 1 * len(mapping.loc[str])
+
+                # keeping for nice outputs
+                bestRoutes.append(mapping.loc[str])
+                bestTimes.append(costs.loc[str])
+
+        # output regions solution
+        print(i, " ", check, '/', len(routes.index), "\ttotal time for region:", value(prob.objective))
 
         # calculate total time
         totalTime += value(prob.objective)
 
-    # nice output of routes
+    # nice output of best routes
+    print(" ")
+    cnt = 0
     for map in bestRoutes:
         for j in range(len(map)):
             print(map[j], "-->", end=" ")
-        print("end")
+        print("time for route:", bestTimes[cnt])
+        cnt += 1
 
-    print("The total time is ", totalTime, " in seconds")
-
+    # output of total time
+    print("The total time for all regions ", totalTime, " in seconds")
     return
+
 
 def readDemands(col):
     """ Reads in demands from a csv file and return correct set.
@@ -124,11 +133,12 @@ def readDemands(col):
             Store 3                 [3, 8]
             Store 4                 [6, 9]
     """
+    # this is currently hard coded
     demands = pd.read_csv("data" + os.sep + "WoolworthsDemands.csv", index_col=0)
     demands = demands["6/14/2021"]
     return demands
 
-    #return pd.read_csv("data" +os.sep +"DemandEstimation.csv")[:][col]
+    #return pd.read_csv("data" +os.sep +"DemandEstimation.csv", index_col=0)[:][col]
 
 
 def selectRegion(region):
@@ -330,11 +340,11 @@ def routeSelection(routesFrame, timeFrame, region):
     """ Select the best combination of routes that satisfy each store
             Parameters:
             -----------
-            routesFrame : pandas DataFrame
-                Independent variable.
+            routesFrame : Pandas DataFrame
+                collection of routes for each store.
 
-            timeFrame : pandas Series
-                Independent variable.
+            timeFrame : Pandas Series
+                contains the time associated with each route.
 
             region: string
                 specifies the current region
@@ -342,6 +352,8 @@ def routeSelection(routesFrame, timeFrame, region):
 
             Returns:
             --------
+            prob : object
+                object containing everything regarding to the lp solution
 
 
             Notes:
@@ -358,19 +370,6 @@ def routeSelection(routesFrame, timeFrame, region):
 
             The timeFrame format is:
             Time per route [100, 36, 57, 69]
-
-
-    # The status of the solution is printed to the screen
-    print("Status:", LpStatus[prob.status])
-
-    # Each of the variables is printed with it's resolved optimum value
-    for v in prob.variables():
-        if (v.varValue != 0):
-            print(v.name, "-", v.varValue)
-
-    # The optimised objective function value is printed to the screen
-    print("Total Time = ", value(prob.objective))
-
     """
     # create problem and variables
     prob = LpProblem(region, LpMinimize)
@@ -384,12 +383,12 @@ def routeSelection(routesFrame, timeFrame, region):
         prob += lpSum([vars[j] * routesFrame[j][i] for j in routesFrame.columns]) == 1
 
     # truck constraint
-    prob += lpSum([vars[i] for i in routesFrame.columns]) <= 60
+    prob += lpSum([vars[i] for i in routesFrame.columns]) <= 30
 
     # The problem data is written to an .lp file
-    # prob.writeLP("VehicleRoutingProblem. lp")
+    # prob.writeLP("VehicleRoutingProblem.lp")
 
-    # The problem is solved using PuLP's choice of Solver
+    # The problem is solved using PuLP's choice of Solver, msg=0 to suppress output
     prob.solve(PULP_CBC_CMD(msg=0))
 
     return prob
