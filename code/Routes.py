@@ -3,6 +3,8 @@ import pandas as pd
 import itertools as it
 from pulp import *
 import os
+import time
+
 
 def vehicleRoutingProblem(demand, max):
     """ solve a vehicle routing problem for specific demands and a maximum route size.
@@ -108,7 +110,7 @@ def vehicleRoutingProblem(demand, max):
     # output of total time
     print("\t cumulative total time for all regions", totalTime, " in seconds")
     print("\t Total cost of all routes", 225*totalTime/3600, "$")
-    returnyeah 
+    return
 
 
 def readDemands(col):
@@ -397,6 +399,7 @@ def routeSelection(routesFrame, timeFrame, region):
         prob += lpSum([vars[j] * routesFrame[j][i] for j in routesFrame.columns]) == 1
 
     # truck constraint
+    # TODO: More trucks for more cost.
     prob += lpSum([vars[i] for i in routesFrame.columns]) <= 30
 
     # The problem data is written to an .lp file
@@ -412,4 +415,6 @@ def routeSelection(routesFrame, timeFrame, region):
 
 
 if __name__ == "__main__":
-    vehicleRoutingProblem(0, 4)
+    start_time = time.time()
+    vehicleRoutingProblem(0, 3)
+    print(" Execution time --- %s seconds ---" % (time.time() - start_time))
