@@ -134,7 +134,7 @@ def readDemands(col):
             Store 4                 [6, 9]
     """
     # this is currently hard coded
-    demands = pd.read_csv("data" + os.sep + "WoolworthsDemands.csv", index_col=0)
+    demands = pd.read_csv("code" + os.sep + "data" + os.sep + "WoolworthsDemands.csv", index_col=0)
     demands = demands["6/14/2021"]
     return demands
 
@@ -165,7 +165,7 @@ def selectRegion(region):
             Store 3      ... [South] ...
             Store 4      ... [NorthWest] ...
     """
-    areas = pd.read_csv("data" + os.sep + "WoolworthsLocationsDivisions.csv", index_col=2)
+    areas = pd.read_csv("code" + os.sep + "data" + os.sep + "WoolworthsLocationsDivisions.csv", index_col=2)
     return areas[areas["Area"]==region]
 
 
@@ -325,7 +325,7 @@ def costRoutes(route):
     route = ('Distribution Centre Auckland',) + route + ('Distribution Centre Auckland',)
 
     # read in time DataFrame with storeName indexing
-    time = pd.read_csv("data" +os.sep +"WoolworthsTravelDurations.csv", index_col=0)
+    time = pd.read_csv("code" + os.sep + "data" +os.sep +"WoolworthsTravelDurations.csv", index_col=0)
 
     cost = 0
     # loop from 1 through length of route list
