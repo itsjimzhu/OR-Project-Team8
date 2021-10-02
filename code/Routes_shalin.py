@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+from itertools import combinations as cb
 import os
 
 
@@ -91,13 +92,7 @@ def routeGeneration(region, choose):
             I think we should store the generated routes as a list
             which we can then use as a key for the larger dataframe
 
-            The format of the csv is:
-                                    R1, R2, R3
-
-                Store 1             [1, 0, 1]
-                Store 2             [0, 0, 0]
-                Store 3             [1, 0, 1]
-                Store 4             [0, 1, 1]
+            [[s1,s2], [s3,s4], [s1,s4], [s4,s5]]
         """
 
     # left blank for now
@@ -138,11 +133,12 @@ def permutateRoute(route):
             permutations : 2d Array
                 permutations.
 
+
             Notes:
             ------
 
     """
-    # should be easy we googeled that permutation function
+    # should be easy we googled that permutation function
 
 
 def costRoutes(list):
@@ -152,13 +148,17 @@ def costRoutes(list):
             route : list
                 combination of stores.
 
+
             Returns:
             --------
-           cost : int
+            cost : int
                 final cost of a route
+
 
             Notes:
             ------
+            We don't need an average even though the times are directional
+            because simulation will generate values in a range that include both directions times
 
     """
     # insert distribution at start
@@ -168,10 +168,10 @@ def costRoutes(list):
     # convert to data frame with storeName indexing
 
     # loop from 1 through length of route list
-        # get value at [i][i-1]
-        # add to total
+        # get time at [i][i-1]
+        # add to cost
 
-    # return total
+    # return cost
 
 def columnnVector(route):
     """ converts a list of routes to a column vector of all stores.
@@ -180,10 +180,12 @@ def columnnVector(route):
             route : list
                 list of stores names.
 
+
             Returns:
             --------
             vector : vector
                 final cost of a route
+
 
             Notes:
             ------
@@ -196,7 +198,7 @@ def columnnVector(route):
 if __name__ == "__main__":
     temp = 0
     # call readDemands
-    # instantiate lp matrix
+    # instantiate lp dataframe
 
     # for loop through each region
         # storeNames <- call selectRegion
@@ -217,7 +219,7 @@ if __name__ == "__main__":
                 # replace routes[i] with permuatation list (this will store the order for us)(remember to remove distribution nodes)
 
                 # vector <- call column Vector(route)
-                # append to lp matrix
+                # append to lp dataframe
 
 
     # call lp
