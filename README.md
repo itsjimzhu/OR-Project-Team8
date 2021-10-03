@@ -1,7 +1,7 @@
 # OR-Project-Team8
 ENGSCI 263 OR project; team 8
 
-Woolworths NZ would like us to determine a suitable truck logistics plan such that costs are minimised. They have provided us with: 
+Woolworths NZ would like us to determine a suitable truck logistics plan, such that costs are minimised. They have provided us with: 
 
 ### Given
 - **WoolworthsDemands.csv**         : Number of pallets delivered to each store they operate over a 4 week period (pre-lockdown), 
@@ -17,7 +17,7 @@ Woolworths NZ would like us to determine a suitable truck logistics plan such th
 - Two shifts start at 8am or 2pm.
 - Each store only receives one delivery per day.
 - Extra time costs Woolworths $275 per hour.
-- additional trucks can be ‘wet-leased’ for a cost of $2000 for every four hours of on-duty time, charged in four-hour blocks
+- Additional trucks can be ‘wet-leased’ for a cost of $2000 for every four hours of on-duty time, charged in four-hour blocks.
   
 ### Assume
 - Times between stores are unidirectional.
