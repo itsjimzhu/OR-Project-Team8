@@ -21,7 +21,7 @@ colnames(demand) <- dates
 
 demand <- demand %>% pivot_longer(-c("Store"), names_to = "date",values_to = "demand")
 
-demand$date <- as.Date(demand$date, format = "%m/%d/%Y")
+demand$date <- as.Date(demand$date, format = "%d/%m/%Y")
 # meltdf <- melt(demand, id="Store")
 
 demand$type <- sapply(strsplit(demand$Store," "), `[`, 1)
