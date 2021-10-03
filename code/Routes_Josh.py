@@ -8,6 +8,7 @@ from math import comb
 from itertools import combinations
 import pandas as pd
 import os
+import time
 
 def route(df, k):
 	""" generates matrix of potential length three routes
@@ -98,10 +99,17 @@ def RouteWTimes(Routes,Times):
 	
 	return Routes
 
-
+def RoutesAndCosts(Routes3D, LocationNames):
+	Routes2D = pd.DataFrame([0]*len(LocationNames),columns = ['RouteInitial'], index = LocationNames)
+	for Route in Routes3D.keys():
+		Routes2D['Route ' + str(Route)] = [0]*len(LocationNames)
+		smallest = Routes3D[Route].min()
+		print(1)
+	print(5)
 
 
 if __name__ == "__main__":
+	start = time.time()
 	N = 7
 	df = pd.read_csv("data" + os.sep + "WoolworthsLocations.csv")
 	times = pd.read_csv("data" + os.sep + "WoolworthsTravelDurations.csv")
@@ -129,5 +137,7 @@ if __name__ == "__main__":
 
 	TimedRoutes = RouteWTimes(Routes3Ds, SouthTimes)
 
-	print('yes')
+	RoutesAndCosts(TimedRoutes, SouthTimes.columns)
+
+	print(time.time() - start)
     
