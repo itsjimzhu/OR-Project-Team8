@@ -471,9 +471,11 @@ def display (bestRoutes, bestTimes, totalTime):
     print(" ")
     cnt = 0
     for map in bestRoutes:
+        print("Distribution Centre --> ", end=" ")
         for j in range(len(map)):
             print(map[j], "-->", end=" ")
-        print("time for route:", bestTimes[cnt])
+        print("Distribution Centre --> ", end=" ")
+        print("time for route:", round((bestTimes[cnt]/3600),1), "hours")
         cnt += 1
 
     # output of total time
