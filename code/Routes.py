@@ -80,7 +80,7 @@ def vehicleRoutingProblem(demand, max):
         bestRoutes, bestTimes, check = bestRegion(bestRoutes, bestTimes, prob, mapping, costs)
 
         # display regions solution
-        print(i, " ", check, '/', len(routes.index), "\t cumulative total time for region:", value(prob.objective))
+        print(i, check, '/', len(routes.index), "\tcumulative time for region:", value(prob.objective))
 
         # calculate total time
         totalTime += value(prob.objective)
@@ -471,16 +471,16 @@ def display (bestRoutes, bestTimes, totalTime):
     print(" ")
     cnt = 0
     for map in bestRoutes:
-        print("Distribution Centre --> ", end=" ")
+        print("Distribution Centre -->", end=" ")
         for j in range(len(map)):
             print(map[j], "-->", end=" ")
-        print("Distribution Centre --> ", end=" ")
-        print("time for route:", round((bestTimes[cnt]/3600),1), "hours")
+        print("Distribution Centre.", end=" ")
+        print("\ttime for route:", round((bestTimes[cnt]/3600),1), "hours")
         cnt += 1
 
     # output of total time
-    print("\t cumulative total time for all regions", totalTime, " in seconds")
-    print("\t Total cost of all routes", 225 * totalTime / 3600, "$")
+    print("\ncumulative time for all regions", totalTime, "in seconds")
+    print("Total cost of all routes $", 225 * totalTime / 3600)
 
     return
 
@@ -488,4 +488,4 @@ def display (bestRoutes, bestTimes, totalTime):
 if __name__ == "__main__":
     start_time = time.time()
     vehicleRoutingProblem(0, 3)
-    print(" Execution time --- %s seconds ---" % (time.time() - start_time))
+    print("\nExecution time --- %s seconds ---" % (time.time() - start_time))
