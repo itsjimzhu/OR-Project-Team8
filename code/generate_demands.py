@@ -6,9 +6,14 @@ from pulp import *
 import os
 import time
 
+PATHFILE = False
 
 def generate_demands(type = 'Ceil', Saturday = False):
-    initial = pd.read_csv("code" + os.sep + "data" + os.sep + "DemandLongPivot.csv", index_col=0)
+    if PATHFILE:
+        initial = pd.read_csv("code" + os.sep + "data" + os.sep + "DemandLongPivot.csv", index_col=0)
+    else:
+        initial = pd.read_csv("data" + os.sep + "DemandLongPivot.csv", index_col=0)
+
     initial.set_index('Store')
 
     if Saturday == True:

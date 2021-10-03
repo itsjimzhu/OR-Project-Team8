@@ -7,9 +7,9 @@ import time
 from generate_demands import *
 
 # if you are having file path problems change this
-PATHFILE = True
+PATHFILE = False
 
-def vehicleRoutingProblem(demand, max, Weekend = False):
+def vehicleRoutingProblem(demand, max, weekend = False):
     """ solve a vehicle routing problem for specific demands and a maximum route size.
             Parameters:
             -----------
@@ -33,15 +33,18 @@ def vehicleRoutingProblem(demand, max, Weekend = False):
     totalTime = 0
 
     # read in demands
-    demands = generate_demands(type = 'Random', Saturday=Weekend)
-    # Debug constant demands
-    # demands = readDemands(demand)
+    demands = generate_demands(type = 'Random', Saturday=weekend)
+    #demands = readDemands(demand)
 
     # loop through each region
     regions = ["North", "City", "East", "SouthEast", "South", "West", "NorthWest"]
     for i in regions:
         # select correct region
         region = selectRegion(i)
+
+        # if weekend remove 0 demand stores
+        if weekend:
+            region = checkWeekend(region)
 
         # generate and cull routes
         routes = routeGeneration(region, max)
@@ -63,7 +66,7 @@ def vehicleRoutingProblem(demand, max, Weekend = False):
             # loop through permutations
             for p in permutations:
                 # find cost of permutation
-                test = costRoutes(p,demands)
+                test = costRoutes(p, demands)
 
                 # store lowest permutation and best order
                 if (test < cost):
@@ -122,14 +125,11 @@ def readDemands(col):
     """
     # this is currently hard coded
     if PATHFILE:
-        demands = pd.read_csv("code" + os.sep + "data" + os.sep + "WoolworthsDemands.csv", index_col=0)
+        demands = pd.read_csv("code" + os.sep + "data" + os.sep + "DemandEstimation.csv", index_col=0)
     else:
-        demands = pd.read_csv("data" + os.sep + "WoolworthsDemands.csv", index_col=0)
+        demands = pd.read_csv("data" + os.sep + "DemandEstimation.csv", index_col=0)
 
-    demands = demands["6/14/2021"]
-    return demands
-
-    #return pd.read_csv("data" +os.sep +"DemandEstimation.csv", index_col=0)[:][col]
+    return demands[col]
 
 
 def selectRegion(region):
@@ -162,6 +162,27 @@ def selectRegion(region):
         areas = pd.read_csv("data" + os.sep + "WoolworthsLocationsDivisions.csv", index_col=2)
 
     return areas[areas["Area"]==region]
+
+
+def checkWeekend(region):
+    """ checks total demand for a set of routes and removes all greater than 26.
+            Parameters:
+            -----------
+            region : pandas DataFrame
+                Stores within this region.
+
+
+            Returns:
+            --------
+            region : pandas DataFrame
+                Culled stores within this region.
+    """
+    for store in region.index:
+        test = region['Type'][store]
+        if region['Type'][store] != "Countdown":
+            region.drop(store, inplace=True, axis=0)
+
+    return region
 
 
 def routeGeneration(region, choose):
@@ -329,14 +350,7 @@ def costRoutes(route, demands):
 
     # Setting time to zero for demand = 0
     for store in range(len(route)):
-
-        # No need to travel to routes with no demand, simulate no travel time.
-        if (demands[route[store]] == 0):
-            time.loc[route[store]] = 0
-            time[route[store]] = 0
-            pass
-        else:
-            cost += 450 * demands[route[store]]
+        cost += 450 * demands[route[store]]
 
     # insert origin node at start and end
     route = ('Distribution Centre Auckland',) + route + ('Distribution Centre Auckland',)
@@ -499,6 +513,8 @@ def display (bestRoutes, bestTimes, totalTime):
 
 if __name__ == "__main__":
     start_time = time.time()
-    vehicleRoutingProblem(0, 3, Weekend = True)
+
+    vehicleRoutingProblem('0', 3)
+    vehicleRoutingProblem('1', 3, weekend=True)
 
     print("\nExecution time --- %s seconds ---" % (time.time() - start_time))
