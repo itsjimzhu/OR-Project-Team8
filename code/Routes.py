@@ -5,6 +5,8 @@ from pulp import *
 import os
 import time
 
+# if you are having file path problems change this
+PATHFILE = False
 
 def vehicleRoutingProblem(demand, max):
     """ solve a vehicle routing problem for specific demands and a maximum route size.
@@ -15,9 +17,6 @@ def vehicleRoutingProblem(demand, max):
 
             col : int
                 the maximum amount of stores per route.
-
-            Returns:
-            --------
 
 
             Notes:
@@ -77,39 +76,18 @@ def vehicleRoutingProblem(demand, max):
         # select best combination of routes
         prob = routeSelection(routes, costs, i)
 
-        # loop through problem variables
-        check = 0
-        for v in prob.variables():
-            # only do used routes
-            if (v.varValue != 0):
-                # convert problem variable regions to correct index format
-                str = v.name.split("_", 1)[1].replace("_", " ")
+        # check, display and store current region
+        bestRoutes, bestTimes, check = bestRegion(bestRoutes, bestTimes, prob, mapping, costs)
 
-                # check each store is satisfied
-                check += 1 * len(mapping.loc[str])
-
-                # keeping for nice outputs
-                bestRoutes.append(mapping.loc[str])
-                bestTimes.append(costs.loc[str])
-
-        # output regions solution
+        # display regions solution
         print(i, " ", check, '/', len(routes.index), "\t cumulative total time for region:", value(prob.objective))
 
         # calculate total time
         totalTime += value(prob.objective)
 
-    # nice output of best routes
-    print(" ")
-    cnt = 0
-    for map in bestRoutes:
-        for j in range(len(map)):
-            print(map[j], "-->", end=" ")
-        print("time for route:", bestTimes[cnt])
-        cnt += 1
+    # nice clean display of best routes
+    display(bestRoutes, bestTimes, totalTime)
 
-    # output of total time
-    print("\t cumulative total time for all regions", totalTime, " in seconds")
-    print("\t Total cost of all routes", 225*totalTime/3600, "$")
     return
 
 
@@ -138,7 +116,11 @@ def readDemands(col):
             Store 4                 [6, 9]
     """
     # this is currently hard coded
-    demands = pd.read_csv("code" + os.sep + "data" + os.sep + "WoolworthsDemands.csv", index_col=0)
+    if PATHFILE:
+        demands = pd.read_csv("code" + os.sep + "data" + os.sep + "WoolworthsDemands.csv", index_col=0)
+    else:
+        demands = pd.read_csv("data" + os.sep + "WoolworthsDemands.csv", index_col=0)
+
     demands = demands["6/14/2021"]
     return demands
 
@@ -169,7 +151,11 @@ def selectRegion(region):
             Store 3      ... [South] ...
             Store 4      ... [NorthWest] ...
     """
-    areas = pd.read_csv("code" + os.sep + "data" + os.sep + "WoolworthsLocationsDivisions.csv", index_col=2)
+    if PATHFILE:
+        areas = pd.read_csv("code" + os.sep + "data" + os.sep + "WoolworthsLocationsDivisions.csv", index_col=2)
+    else:
+        areas = pd.read_csv("data" + os.sep + "WoolworthsLocationsDivisions.csv", index_col=2)
+
     return areas[areas["Area"]==region]
 
 
@@ -198,6 +184,7 @@ def routeGeneration(region, choose):
     # get amount of stores in this region
     n = len(region.index)
 
+    # route generation
     routes = np.array(
         [
             [1 if i in comb else 0 for i in range(n)]
@@ -337,14 +324,17 @@ def costRoutes(route, demands):
     route = ('Distribution Centre Auckland',) + route + ('Distribution Centre Auckland',)
 
     # read in time DataFrame with storeName indexing
-    time = pd.read_csv("code" + os.sep + "data" +os.sep +"WoolworthsTravelDurations.csv", index_col=0)
+    if PATHFILE:
+        time = pd.read_csv("code" + os.sep + "data" +os.sep +"WoolworthsTravelDurations.csv", index_col=0)
+    else:
+        time = pd.read_csv("data" + os.sep + "WoolworthsTravelDurations.csv", index_col=0)
 
     # loop from 1 through length of route list
     for i in range(1, len(route)):
         # add time between current and previous node
         cost += time[route[i]][route[i-1]]
 
-    # Can't have routes longer than 4 hours
+    # ignore routes longer than 4 hours
     # TODO: BUT - after implementing randomness we can allow for longer routes at greater cost.
     if (cost > 14400):
         cost = 99999
@@ -412,6 +402,85 @@ def routeSelection(routesFrame, timeFrame, region):
     # Check the CostRoutes() function
 
     return prob
+
+
+def bestRegion(bestRoutes, bestTimes, prob, mapping, costs):
+    """ Helper function to check and prepare routes and time data for display
+            Parameters:
+            -----------
+            bestRoutes : Pandas DataFrame
+                contains the best routes that satisfy all store demands.
+
+            bestTimes : Pandas Series
+                contains the best time associated with a route permutation.
+
+            prob : object
+                object containing everything regarding to the lp solution.
+
+            mapping : list
+                contains all the route data for a region.
+
+            costs : list
+                contains all the time data for a region.
+
+
+            Returns:
+            --------
+            bestRoutes : Pandas DataFrame
+                contains the updated best routes that satisfy all store demands.
+
+            bestTimes : Pandas Series
+                contains the updated best time associated with a route permutation.
+
+            check : int
+                counter to check if all stores where visited.
+    """
+    # loop through problem variables
+    check = 0
+    for v in prob.variables():
+        # only transform used routes
+        if (v.varValue != 0):
+            # convert problem variable regions to correct index format
+            str = v.name.split("_", 1)[1].replace("_", " ")
+
+            # check each store is satisfied
+            check += 1 * len(mapping.loc[str])
+
+            # store in vector for final display
+            bestRoutes.append(mapping.loc[str])
+            bestTimes.append(costs.loc[str])
+
+    return bestRoutes, bestTimes, check
+
+
+def display (bestRoutes, bestTimes, totalTime):
+    """ Helper function to display the final route and time data
+            Parameters:
+            -----------
+            bestRoutes : Pandas DataFrame
+                contains the best routes that satisfy all store demands.
+
+            bestTimes : Pandas Series
+                contains the best time associated with a route permutation.
+
+            TotalTime
+                Cumulative time of all routes.
+
+
+    """
+    print(" ")
+    cnt = 0
+    for map in bestRoutes:
+        for j in range(len(map)):
+            print(map[j], "-->", end=" ")
+        print("time for route:", bestTimes[cnt])
+        cnt += 1
+
+    # output of total time
+    print("\t cumulative total time for all regions", totalTime, " in seconds")
+    print("\t Total cost of all routes", 225 * totalTime / 3600, "$")
+
+    return
 
 
 if __name__ == "__main__":
