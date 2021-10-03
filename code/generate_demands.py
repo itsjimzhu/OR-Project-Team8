@@ -35,7 +35,7 @@ def generate_demands(type = 'Ceil', Saturday = False):
     else:
         random = []
         for store in all_data.index:
-            random.append(np.random.normal(all_data['Mean'][store], all_data['Deviation'][store], 1))
+            random.append(np.random.normal(all_data['Mean'][store], all_data['Deviation'][store], 1)[0])
 
     all_data['Random'] = random
     return all_data['Random']
