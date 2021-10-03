@@ -4,6 +4,7 @@ import itertools as it
 from pulp import *
 import os
 import time
+from generate_demands import *
 
 # if you are having file path problems change this
 PATHFILE = False
@@ -29,7 +30,7 @@ def vehicleRoutingProblem(demand, max):
     totalTime = 0
 
     # read in demands
-    demands = readDemands(demand)
+    demands = generate_demands(type = 'Random')
 
     # loop through each region
     regions = ["North", "City", "East", "SouthEast", "South", "West", "NorthWest"]
