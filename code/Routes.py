@@ -7,9 +7,9 @@ import time
 from generate_demands import *
 
 # if you are having file path problems change this
-PATHFILE = False
+PATHFILE = True
 
-def vehicleRoutingProblem(demand, max):
+def vehicleRoutingProblem(demand, max, Weekend = False):
     """ solve a vehicle routing problem for specific demands and a maximum route size.
             Parameters:
             -----------
@@ -18,6 +18,9 @@ def vehicleRoutingProblem(demand, max):
 
             col : int
                 the maximum amount of stores per route.
+            
+            Weekend : bool
+                True if we are generating saturday routes, false by default.
 
 
             Notes:
@@ -30,7 +33,9 @@ def vehicleRoutingProblem(demand, max):
     totalTime = 0
 
     # read in demands
-    demands = generate_demands(type = 'Random')
+    # demands = generate_demands(type = 'Random', Saturday=Weekend)
+    # Debug 
+    demands = readDemands(demand)
 
     # loop through each region
     regions = ["North", "City", "East", "SouthEast", "South", "West", "NorthWest"]
@@ -58,7 +63,6 @@ def vehicleRoutingProblem(demand, max):
             # loop through permutations
             for p in permutations:
                 # find cost of permutation
-                # TODO add pallet unloading to costRoutes() function, 450 * number of pallets.
                 test = costRoutes(p,demands)
 
                 # store lowest permutation and best order
@@ -488,5 +492,6 @@ def display (bestRoutes, bestTimes, totalTime):
 
 if __name__ == "__main__":
     start_time = time.time()
-    vehicleRoutingProblem(0, 3)
+    vehicleRoutingProblem(0, 4, Weekend = True)
+
     print("\nExecution time --- %s seconds ---" % (time.time() - start_time))
