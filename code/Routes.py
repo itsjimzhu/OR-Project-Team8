@@ -33,9 +33,9 @@ def vehicleRoutingProblem(demand, max, Weekend = False):
     totalTime = 0
 
     # read in demands
-    # demands = generate_demands(type = 'Random', Saturday=Weekend)
-    # Debug 
-    demands = readDemands(demand)
+    demands = generate_demands(type = 'Random', Saturday=Weekend)
+    # Debug constant demands
+    # demands = readDemands(demand)
 
     # loop through each region
     regions = ["North", "City", "East", "SouthEast", "South", "West", "NorthWest"]
@@ -321,18 +321,25 @@ def costRoutes(route, demands):
     """
     cost = 0
 
-    # Crate unloading time
-    for store in range(len(route)):
-        cost += 450 * demands[route[store]]
-
-    # insert origin node at start and end
-    route = ('Distribution Centre Auckland',) + route + ('Distribution Centre Auckland',)
-
     # read in time DataFrame with storeName indexing
     if PATHFILE:
         time = pd.read_csv("code" + os.sep + "data" +os.sep +"WoolworthsTravelDurations.csv", index_col=0)
     else:
         time = pd.read_csv("data" + os.sep + "WoolworthsTravelDurations.csv", index_col=0)
+
+    # Setting time to zero for demand = 0
+    for store in range(len(route)):
+
+        # No need to travel to routes with no demand, simulate no travel time.
+        if (demands[route[store]] == 0):
+            time.loc[route[store]] = 0
+            time[route[store]] = 0
+            pass
+        else:
+            cost += 450 * demands[route[store]]
+
+    # insert origin node at start and end
+    route = ('Distribution Centre Auckland',) + route + ('Distribution Centre Auckland',)
 
     # loop from 1 through length of route list
     for i in range(1, len(route)):
@@ -492,6 +499,6 @@ def display (bestRoutes, bestTimes, totalTime):
 
 if __name__ == "__main__":
     start_time = time.time()
-    vehicleRoutingProblem(0, 4, Weekend = True)
+    vehicleRoutingProblem(0, 3, Weekend = True)
 
     print("\nExecution time --- %s seconds ---" % (time.time() - start_time))
