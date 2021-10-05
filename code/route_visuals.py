@@ -8,10 +8,11 @@ from generate_demands import *
 import folium
 import openrouteservice as ors
 
+PATHFILE = True
 #set your key here
-myKey = 
+myKey = '5b3ce3597851110001cf62488446fbb2ccc14d6695a1cb348f0a6edd'
 
-def visualise(route):
+def visualise(route, routeName, day):
     ''' This function takes a route and visualises it on a map'''
     
     client = ors.Client(key = myKey)
@@ -40,10 +41,28 @@ def visualise(route):
             iconCol = "black"
         folium.Marker([coords.loc[store,'Lat'],coords.loc[store,'Long']], popup = coords.loc[store].name,\
             icon = folium.Icon(color = iconCol)).add_to(m)
-    m.save('mapping.html')
+    if PATHFILE:
+        savename = "code" + os.sep + "RouteMaps" + os.sep + day + os.sep + routeName + '.html'
+    else:
+        savename = "RouteMaps" + os.sep + day + os.sep + routeName + '.html'
+    m.save(savename)
+
+def visual_all_routes(bestRoutes, day):
+    """This function takes a list of routes and generates maps of those routes, saving them to 'day' folder
+    
+        Parameters:
+            -----------
+            bestRoutes: List
+                list of routes (as list of locations)
+            day: str
+                'Week' or 'Saturday'
+                the type of day that we are running the program for
+    """
+    for i in range(0,len(bestRoutes)):
+        visualise(bestRoutes[i], 'Route_'+str(i+1), day)
 
 if __name__ == "__main__":
-    visualise(('Countdown Hauraki Corner', 'Countdown Milford'))
+    visualise(('Countdown Grey Lynn', 'Countdown Grey Lynn Central'),'Route_1', 'Week')
 
 
 
