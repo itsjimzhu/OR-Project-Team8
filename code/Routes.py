@@ -7,15 +7,12 @@ import time
 from generate_demands import *
 
 # if you are having file path problems change this
-PATHFILE = False
+PATHFILE = True
 
-def vehicleRoutingProblem(demand, max, weekend = False):
+def vehicleRoutingProblem(max, weekend = False):
     """ solve a vehicle routing problem for specific demands and a maximum route size.
             Parameters:
             -----------
-            demand : int
-                specifies which set of demands (Weekday or Saturday).
-
             col : int
                 the maximum amount of stores per route.
             
@@ -49,8 +46,8 @@ def vehicleRoutingProblem(demand, max, weekend = False):
 
         # TODO remove this function as not needed
         # if weekend remove 0 demand stores
-        if weekend:
-            region = checkWeekend(region)
+        # if weekend:
+        #     region = checkWeekend(region)
 
         # generate and cull routes
         routes = routeGeneration(region, max)
@@ -175,7 +172,7 @@ def selectRegion(region, Saturday = False):
 
 
 def checkWeekend(region):
-    """ checks total demand for a set of routes and removes all greater than 26.
+    """ checks total demand for a set of routes and removes all stores that are not countdowns
             Parameters:
             -----------
             region : pandas DataFrame
@@ -523,8 +520,7 @@ def display (bestRoutes, bestTimes, totalTime):
 
 if __name__ == "__main__":
     start_time = time.time()
-
-    vehicleRoutingProblem('0', 3)
-    vehicleRoutingProblem('1', 3, weekend=True)
+    # vehicleRoutingProblem( 4, weekend=False)
+    vehicleRoutingProblem( 4, weekend=True)
 
     print("\nExecution time --- %s seconds ---" % (time.time() - start_time))
