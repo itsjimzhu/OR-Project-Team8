@@ -36,7 +36,7 @@ def vehicleRoutingProblem(max, weekend = False, Mapping = False):
 
     # set regions depending on if weekend or weekday
     if weekend == True:
-        regions = ["North", "City", "East", "South", "West"] 
+        regions = ["North", "City", "East", "South", "West", "Central"] 
     else:
         regions = ["North", "City", "East", "SouthEast", "South", "West", "NorthWest"]
     
