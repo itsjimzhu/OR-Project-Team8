@@ -5,15 +5,17 @@ from pulp import *
 import os
 import time
 from generate_demands import *
-from route_visuals import *
 
 # if you are having file path problems change this
-PATHFILE = True
+PATHFILE = False
 
-def vehicleRoutingProblem(max, weekend = False, Mapping = False):
+def vehicleRoutingProblem(demand, max, weekend = False):
     """ solve a vehicle routing problem for specific demands and a maximum route size.
             Parameters:
             -----------
+            demand : int
+                specifies which set of demands (Weekday or Saturday).
+
             col : int
                 the maximum amount of stores per route.
             
@@ -31,24 +33,24 @@ def vehicleRoutingProblem(max, weekend = False, Mapping = False):
     totalTime = 0
 
     # read in demands
-    demands = generate_demands(type = 'Ceil', Saturday=weekend)
-    #demands = readDemands(demand)
+    demands = readDemands(demand)
+    #demands = generate_demands(type = 'Ceil', Saturday=weekend)
 
     # set regions depending on if weekend or weekday
-    if weekend == True:
-        regions = ["North", "City", "East", "South", "West", "Central"] 
+    if weekend:
+        regionAreas = ["North", "City", "East", "South", "West"]
     else:
-        regions = ["North", "City", "East", "SouthEast", "South", "West", "NorthWest"]
+        regionAreas = ["North", "City", "East", "SouthEast", "South", "West", "NorthWest"]
     
     # loop through each region
-    for i in regions:
+    for i in regionAreas:
         # select correct region
-        region = selectRegion(i, Saturday = weekend)
+        region = selectRegion(i, weekend)
 
-        # TODO remove this function as not needed
+        # currently not in use
         # if weekend remove 0 demand stores
-        # if weekend:
-        #     region = checkWeekend(region)
+        #if weekend:
+        #    region = checkWeekend(region)
 
         # generate and cull routes
         routes = routeGeneration(region, max)
@@ -100,12 +102,6 @@ def vehicleRoutingProblem(max, weekend = False, Mapping = False):
     # nice clean display of best routes
     display(bestRoutes, bestTimes, totalTime)
 
-    if Mapping == True:
-        if weekend == True:
-            visual_all_routes(bestRoutes, 'Saturday')
-        else:
-            visual_all_routes(bestRoutes, 'Week')
-
     return
 
 
@@ -142,7 +138,7 @@ def readDemands(col):
     return demands[col]
 
 
-def selectRegion(region, Saturday = False):
+def selectRegion(region, Saturday=False):
     """ return correct set of stores according to specified regions.
             Parameters:
             -----------
@@ -172,14 +168,14 @@ def selectRegion(region, Saturday = False):
         areas = pd.read_csv("data" + os.sep + "WoolworthsLocationsDivisions.csv", index_col=2)
 
     # If a saturday, return the Saturday areas as opposed to normal areas
-    if Saturday == True:
+    if Saturday:
         return areas[areas["SatArea"]==region]
 
     return areas[areas["Area"]==region]
 
 
 def checkWeekend(region):
-    """ checks total demand for a set of routes and removes all stores that are not countdowns
+    """ reads through a set of stores and removes all that are not countdown.
             Parameters:
             -----------
             region : pandas DataFrame
@@ -190,6 +186,11 @@ def checkWeekend(region):
             --------
             region : pandas DataFrame
                 Culled stores within this region.
+
+
+            Notes:
+            ------
+            Superseded by better data storage but left in code incase needed in the future
     """
     for store in region.index:
         test = region['Type'][store]
@@ -520,14 +521,15 @@ def display (bestRoutes, bestTimes, totalTime):
 
     # output of total time
     print("\ncumulative time for all regions", totalTime, "in seconds")
-    print("Total cost of all routes $", 225 * totalTime / 3600)
+    print("Total cost of all routes $", 225 * totalTime / 3600 , "\n\n")
 
     return
 
 
 if __name__ == "__main__":
     start_time = time.time()
-    # vehicleRoutingProblem( 4, weekend=False)
-    vehicleRoutingProblem( 4, weekend=True)
 
-    print("\nExecution time --- %s seconds ---" % (time.time() - start_time))
+    vehicleRoutingProblem('0', 3)
+    vehicleRoutingProblem('1', 3, True)
+
+    print("Execution time --- %s seconds ---" % (time.time() - start_time))

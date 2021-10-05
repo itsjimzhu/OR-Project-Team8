@@ -1,14 +1,11 @@
 import numpy as np
-from numpy.core.fromnumeric import mean
 import pandas as pd
-import itertools as it
-from pulp import *
 import os
-import time
+
 
 PATHFILE = False
 
-def generate_demands(type = 'Ceil', Saturday = False):
+def demandEstimation1(type = 'Ceil', Saturday = False):
     ''' This generates demands for each from the demand data, either in the form random, average or average
         rounded up. It can generate for the week, or for Saturdays
     
@@ -83,6 +80,62 @@ def generate_demands(type = 'Ceil', Saturday = False):
     all_data['Random'] = random
     return all_data['Random']
 
+
+def demandEstimation2():
+    ''' Creates a csv that estimates the average pallet demands at each store for weekdays and saturday
+
+        Notes
+        -----
+
+
+    '''
+    if PATHFILE:
+        demands = pd.read_csv("code" + os.sep + "data" + os.sep + "WoolworthsDemands.csv", index_col=0)
+    else:
+        demands = pd.read_csv("data" + os.sep + "WoolworthsDemands.csv", index_col=0)
+
+    weekDemands = []
+    saturdayDemands = []
+
+    # loop through row
+    for i in demands.index:
+
+        # new demands and cnt for each store
+        weekTemp = 0
+        saturdayTemp = 0
+        cnt = 2
+
+        # loop through columns
+        for j in demands.columns:
+
+            # check for saturday
+            if (cnt) % 7 == 0:
+                saturdayTemp += demands[j][i]
+            else:
+                weekTemp += demands[j][i]
+
+            cnt += 1
+
+        # averages per store
+        weekTemp = weekTemp / 20
+        saturdayTemp = saturdayTemp / 4
+
+        # append for each store
+        weekDemands.append(weekTemp)
+        saturdayDemands.append(saturdayTemp)
+
+    # rounding to whole numbers
+    weekDemands = np.ceil(weekDemands)
+    saturdayDemands = np.ceil(saturdayDemands)
+
+    # convert to dataframe to store in csv
+    zero = pd.Series(weekDemands, index=demands.index)
+    one = pd.Series(saturdayDemands, index=demands.index)
+    df = pd.DataFrame({'0': zero, '1': one})
+
+    # write to csv
+    df.to_csv('data' +os.sep +'DemandEstimation.csv')
+
 if __name__ == "__main__":
-    man = generate_demands(type = 'Deviation')
-    print('yes')
+    df = demandEstimation1(type = 'Ceil', Saturday=False)
+    demandEstimation2()
