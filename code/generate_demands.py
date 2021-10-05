@@ -134,7 +134,10 @@ def demandEstimation2():
     df = pd.DataFrame({'0': zero, '1': one})
 
     # write to csv
-    df.to_csv('data' +os.sep +'DemandEstimation.csv')
+    if PATHFILE:
+        df.to_csv('code' + os.sep + 'data' +os.sep +'DemandEstimation.csv')
+    else:
+        df.to_csv('data' +os.sep +'DemandEstimation.csv')
 
 if __name__ == "__main__":
     df = demandEstimation1(type = 'Ceil', Saturday=False)
