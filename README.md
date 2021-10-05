@@ -21,3 +21,4 @@ Woolworths NZ would like us to determine a suitable truck logistics plan, such t
   
 ### Assume
 - Times between stores are unidirectional.
+- Demand of each weekday is averaged to find one mean value.

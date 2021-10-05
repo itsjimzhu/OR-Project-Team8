@@ -18,8 +18,7 @@ data <- read_csv("WoolworthsLocations.csv")
 
 pal <- colorFactor(palette = 'Dark2', domain = data$Type)
 
-map <- leaflet() %>% addTiles() %>% addCircleMarkers(lng = data$Long, lat = data$Lat, radius = 10, color = pal(data$Type), label = data$Store)
-
+map <- leaflet() %>% addTiles() %>% addCircleMarkers(lng = data$Long, lat = data$Lat, radius = 8, color = pal(data$Type), label = data$Store, fillOpacity = 0.5, opacity = 1) %>% addLegend(pal = pal,values= data$Type)
 
 map
 ```
