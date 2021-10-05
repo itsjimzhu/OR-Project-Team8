@@ -33,15 +33,21 @@ def vehicleRoutingProblem(demand, max, weekend = False):
     totalTime = 0
 
     # read in demands
-    demands = generate_demands(type = 'Random', Saturday=weekend)
+    demands = generate_demands(type = 'Ceil', Saturday=weekend)
     #demands = readDemands(demand)
 
+    # set regions depending on if weekend or weekday
+    if weekend == True:
+        regions = ["North", "City", "East", "South", "West"] 
+    else:
+        regions = ["North", "City", "East", "SouthEast", "South", "West", "NorthWest"]
+    
     # loop through each region
-    regions = ["North", "City", "East", "SouthEast", "South", "West", "NorthWest"]
     for i in regions:
         # select correct region
-        region = selectRegion(i)
+        region = selectRegion(i, Saturday = weekend)
 
+        # TODO remove this function as not needed
         # if weekend remove 0 demand stores
         if weekend:
             region = checkWeekend(region)
@@ -132,7 +138,7 @@ def readDemands(col):
     return demands[col]
 
 
-def selectRegion(region):
+def selectRegion(region, Saturday = False):
     """ return correct set of stores according to specified regions.
             Parameters:
             -----------
@@ -160,6 +166,10 @@ def selectRegion(region):
         areas = pd.read_csv("code" + os.sep + "data" + os.sep + "WoolworthsLocationsDivisions.csv", index_col=2)
     else:
         areas = pd.read_csv("data" + os.sep + "WoolworthsLocationsDivisions.csv", index_col=2)
+
+    # If a saturday, return the Saturday areas as opposed to normal areas
+    if Saturday == True:
+        return areas[areas["SatArea"]==region]
 
     return areas[areas["Area"]==region]
 
