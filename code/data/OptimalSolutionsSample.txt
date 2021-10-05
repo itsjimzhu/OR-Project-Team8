@@ -41,7 +41,7 @@ Total cost of all routes $ 20971.273125
 North 9 / 9     cumulative time for region: 35142.509999999995
 City 11 / 11    cumulative time for region: 32123.29
 East 11 / 11    cumulative time for region: 31550.13
-South 11 / 11   cumulative time for region: 31542.489999999998
+South 11 / 11   cumulative time for region: 31542.489999999998 
 West 11 / 11    cumulative time for region: 35851.28
 
 Distribution Centre --> Countdown Birkenhead --> Countdown Glenfield --> Countdown Northcote --> Distribution Centre.   time for route: 3.4 hours
