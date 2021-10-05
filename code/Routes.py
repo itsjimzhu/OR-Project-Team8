@@ -38,7 +38,7 @@ def vehicleRoutingProblem(demand, max, weekend = False):
 
     # set regions depending on if weekend or weekday
     if weekend:
-        regionAreas = ["North", "City", "East", "South", "West"]
+        regionAreas = ["North", "City", "East", "South", "West", "Central"] 
     else:
         regionAreas = ["North", "City", "East", "SouthEast", "South", "West", "NorthWest"]
     
@@ -101,6 +101,8 @@ def vehicleRoutingProblem(demand, max, weekend = False):
 
     # nice clean display of best routes
     display(bestRoutes, bestTimes, totalTime)
+
+
 
     return
 
