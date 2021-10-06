@@ -7,10 +7,45 @@ import time
 from generate_demands import *
 import folium
 import openrouteservice as ors
+import folium.plugins
+from folium.features import *
 
 PATHFILE = True
 #set your key here
 myKey = '5b3ce3597851110001cf62488446fbb2ccc14d6695a1cb348f0a6edd'
+
+
+# stole this from online - I have no idea what it does but it works so don't touch it
+class DivIcon(MacroElement):
+    def __init__(self, html='', size=(30,30), anchor=(0,0), style=''):
+        """TODO : docstring here"""
+        super(DivIcon, self).__init__()
+        self._name = 'DivIcon'
+        self.size = size
+        self.anchor = anchor
+        self.html = html
+        self.style = style
+
+        self._template = Template(u"""
+            {% macro header(this, kwargs) %}
+              <style>
+                .{{this.get_name()}} {
+                    {{this.style}}
+                    }
+              </style>
+            {% endmacro %}
+            {% macro script(this, kwargs) %}
+                var {{this.get_name()}} = L.divIcon({
+                    className: '{{this.get_name()}}',
+                    iconSize: [{{ this.size[0] }},{{ this.size[1] }}],
+                    iconAnchor: [{{ this.anchor[0] }},{{ this.anchor[1] }}],
+                    html : "{{this.html}}",
+                    });
+                {{this._parent.get_name()}}.setIcon({{this.get_name()}});
+            {% endmacro %}
+            """)
+
+
 
 def visualise(route, routeName, day):
     ''' This function takes a route and visualises it on a map'''
@@ -39,8 +74,20 @@ def visualise(route, routeName, day):
             iconCol = "orange"
         elif coords.loc[store,'Type'] == 'Distribution Centre':
             iconCol = "black"
-        folium.Marker([coords.loc[store,'Lat'],coords.loc[store,'Long']], popup = coords.loc[store].name,\
+        coords_store = [coords.loc[store,'Lat'],coords.loc[store,'Long']]
+        folium.Marker(coords_store, popup = coords.loc[store].name,\
             icon = folium.Icon(color = iconCol)).add_to(m)
+        folium.map.Marker(coords_store,\
+            icon=DivIcon(size=(150,36),anchor=(100,0),html=store,\
+                style="""
+                font-size:14px;
+                background-color: transparent;
+                border-color: transparent;
+                text-align: right;
+                """
+                )
+            ).add_to(m)
+
     if PATHFILE:
         savename = "code" + os.sep + "RouteMaps" + os.sep + day + os.sep + routeName + '.html'
     else:
@@ -62,7 +109,7 @@ def visual_all_routes(bestRoutes, day):
         visualise(bestRoutes[i], 'Route_'+str(i+1), day)
 
 if __name__ == "__main__":
-    visualise(('Countdown Grey Lynn', 'Countdown Grey Lynn Central'),'Route_1', 'Week')
+    visualise(('Countdown Grey Lynn', 'Countdown Grey Lynn Central'),'Route_1', 'Other')
 
 
 

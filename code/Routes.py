@@ -5,11 +5,12 @@ from pulp import *
 import os
 import time
 from generate_demands import *
+from route_visuals import *
 
 # if you are having file path problems change this
 PATHFILE = False
 
-def vehicleRoutingProblem(demand, max, weekend = False):
+def vehicleRoutingProblem(demand, max, weekend = False, Mapping = False):
     """ solve a vehicle routing problem for specific demands and a maximum route size.
             Parameters:
             -----------
@@ -38,7 +39,7 @@ def vehicleRoutingProblem(demand, max, weekend = False):
 
     # set regions depending on if weekend or weekday
     if weekend:
-        regionAreas = ["North", "City", "East", "South", "West"]
+        regionAreas = ["North", "City", "East", "South", "West", "Central"] 
     else:
         regionAreas = ["North", "City", "East", "SouthEast", "South", "West", "NorthWest"]
     
@@ -101,6 +102,12 @@ def vehicleRoutingProblem(demand, max, weekend = False):
 
     # nice clean display of best routes
     display(bestRoutes, bestTimes, totalTime)
+
+    if Mapping:
+        if weekend:
+            visual_all_routes(bestRoutes, 'Saturday')
+        else:
+            visual_all_routes(bestRoutes, 'Week')
 
     return
 
