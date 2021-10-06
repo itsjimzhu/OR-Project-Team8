@@ -12,7 +12,7 @@ from folium.features import *
 
 PATHFILE = True
 #set your key here
-myKey = '5b3ce3597851110001cf62488446fbb2ccc14d6695a1cb348f0a6edd'
+myKey = 
 
 
 # stole this from online - I have no idea what it does but it works so don't touch it
