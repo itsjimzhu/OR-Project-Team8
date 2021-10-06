@@ -39,26 +39,28 @@ cumulative time for all regions 335540.37 in seconds
 Total cost of all routes $ 20971.273125
 
 North 9 / 9     cumulative time for region: 35142.509999999995
-City 11 / 11    cumulative time for region: 32123.29
-East 11 / 11    cumulative time for region: 31550.13
-South 11 / 11   cumulative time for region: 31542.489999999998 
-West 11 / 11    cumulative time for region: 35851.28
-
+City 8 / 8      cumulative time for region: 23831.59
+East 10 / 10    cumulative time for region: 29112.45
+South 10 / 10   cumulative time for region: 29024.949999999997
+West 9 / 9      cumulative time for region: 31571.27
+Central 7 / 7   cumulative time for region: 19052.21
+ 
 Distribution Centre --> Countdown Birkenhead --> Countdown Glenfield --> Countdown Northcote --> Distribution Centre.   time for route: 3.4 hours
 Distribution Centre --> Countdown Hauraki Corner --> Countdown Milford --> Countdown Takapuna --> Distribution Centre.  time for route: 3.0 hours
 Distribution Centre --> Countdown Browns Bay --> Countdown Mairangi Bay --> Countdown Sunnynook --> Distribution Centre.        time for route: 3.4 hours
 Distribution Centre --> Countdown Auckland City --> Countdown Victoria Street West --> Countdown Newmarket --> Countdown Mt Eden --> Distribution Centre.       time for route: 3.3 hours
-Distribution Centre --> Countdown Grey Lynn Central --> Countdown Ponsonby --> Countdown Grey Lynn --> Countdown Pt Chevalier --> Distribution Centre.  time for route: 3.3 hours        
-Distribution Centre --> Countdown Three Kings --> Countdown St Lukes --> Countdown Mt Roskill --> Distribution Centre.  time for route: 2.3 hours
-Distribution Centre --> Countdown Highland Park --> Countdown Aviemore Drive --> Countdown Howick --> Countdown Meadowlands --> Distribution Centre.    time for route: 3.0 hours        
-Distribution Centre --> Countdown St Johns --> Countdown Meadowbank --> Countdown Greenlane --> Distribution Centre.    time for route: 2.7 hours
-Distribution Centre --> Countdown Botany Downs --> Countdown Pakuranga --> Countdown Mt Wellington --> Countdown Sylvia Park --> Distribution Centre.   time for route: 3.1 hours        
+Distribution Centre --> Countdown Grey Lynn Central --> Countdown Ponsonby --> Countdown Grey Lynn --> Countdown Pt Chevalier --> Distribution Centre.  time for route: 3.3 hours
+Distribution Centre --> Countdown Highland Park --> Countdown Aviemore Drive --> Countdown Howick --> Countdown Meadowlands --> Distribution Centre.    time for route: 3.0 hours
+Distribution Centre --> Countdown St Johns --> Countdown Meadowbank --> Countdown Mt Wellington --> Countdown Sylvia Park --> Distribution Centre.      time for route: 3.2 hours
+Distribution Centre --> Countdown Botany Downs --> Countdown Pakuranga --> Distribution Centre.        time for route: 2.0 hours
+Distribution Centre --> Countdown Papatoetoe --> Countdown Manukau --> Countdown Manukau Mall --> Countdown Mangere East --> Distribution Centre.       time for route: 2.9 hours
 Distribution Centre --> Countdown Takanini --> Countdown Papakura --> Countdown Roselands --> Countdown Manurewa --> Distribution Centre.       time for route: 3.6 hours
-Distribution Centre --> Countdown Papatoetoe --> Countdown Manukau --> Countdown Manukau Mall --> Countdown Mangere East --> Distribution Centre.       time for route: 2.9 hours        
-Distribution Centre --> Countdown Mangere Mall --> Countdown Airport --> Countdown Onehunga --> Distribution Centre.    time for route: 2.3 hours
-Distribution Centre --> Countdown Lynmall --> Countdown Kelston --> Countdown Blockhouse Bay --> Countdown Lynfield --> Distribution Centre.    time for route: 3.0 hours
-Distribution Centre --> Countdown Lincoln Road --> Countdown Henderson --> Countdown Te Atatu South --> Countdown Te Atatu --> Distribution Centre.     time for route: 3.6 hours        
-Distribution Centre --> Countdown Westgate --> Countdown Northwest --> Countdown Hobsonville --> Distribution Centre.   time for route: 3.3 hours
+Distribution Centre --> Countdown Mangere Mall --> Countdown Airport --> Distribution Centre.   time for route: 1.6 hours
+Distribution Centre --> Countdown Kelston --> Countdown Henderson --> Countdown Lincoln Road --> Countdown Te Atatu --> Distribution Centre.    time for route: 3.7 hours
+Distribution Centre --> Countdown Lynfield --> Distribution Centre.     time for route: 1.1 hours
+Distribution Centre --> Countdown Te Atatu South --> Countdown Westgate --> Countdown Northwest --> Countdown Hobsonville --> Distribution Centre.      time for route: 3.9 hours
+Distribution Centre --> Countdown Blockhouse Bay --> Countdown Lynmall --> Countdown St Lukes --> Countdown Mt Roskill --> Distribution Centre.         time for route: 3.0 hours
+Distribution Centre --> Countdown Three Kings --> Countdown Greenlane --> Countdown Onehunga --> Distribution Centre.   time for route: 2.3 hours
 
-cumulative time for all regions 166209.69999999998 in seconds
-Total cost of all routes $ 10388.106249999997
+cumulative time for all regions 167734.97999999998 in seconds
+Total cost of all routes $ 10483.436249999999
