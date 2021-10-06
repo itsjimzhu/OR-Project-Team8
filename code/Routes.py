@@ -32,13 +32,8 @@ def vehicleRoutingProblem(max, weekend = False, Mapping = False):
     totalTime = 0
 
     # read in demands
-<<<<<<< HEAD
     demands = readDemands(int(weekend))
     #demands = generate_demands(type = 'Ceil', Saturday=weekend)
-=======
-    # demands = readDemands(int(weekend))
-    demands = demandEstimation1(type = 'Ceil', Saturday=weekend)
->>>>>>> 2adeddfbaeef85516c23580a8f902f073d0c6079
 
     # set regions depending on if weekend or weekday
     if weekend:
