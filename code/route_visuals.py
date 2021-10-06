@@ -12,10 +12,11 @@ from folium.features import *
 
 PATHFILE = True
 #set your key here
-myKey = 
+myKey = '5b3ce3597851110001cf62488446fbb2ccc14d6695a1cb348f0a6edd'
 
 
-# stole this from online - I have no idea what it does but it works so don't touch it
+# stole this from online - I have limited idea how it works but it works as needed so don't touch it
+    #basically it is needed for setting the location names 
 class DivIcon(MacroElement):
     def __init__(self, html='', size=(30,30), anchor=(0,0), style=''):
         """TODO : docstring here"""
@@ -48,22 +49,40 @@ class DivIcon(MacroElement):
 
 
 def visualise(route, routeName, day):
-    ''' This function takes a route and visualises it on a map'''
+    ''' This function takes a route and visualises it on a map
+        
+        Parameters:
+            -----------
+            route : list
+                list of locations in the route, in order
+            routeName : string
+                string that has the name of the route
+            day : string - 'Saturday' or 'Week' are the only valid inputs
+                the type of day that this is (which folder to save to)
+    '''
     
+    # create client and folium map
     client = ors.Client(key = myKey)
     m = folium.Map(location = [-36.95770671222872, 174.81407132219618], zoom_start=15)
 
+    # get coords from locations csv
     coords = pd.read_csv("code" + os.sep + "data" + os.sep + "WoolworthsLocations.csv", index_col=2)
 
+    # add distribution to beginning and end
     dist_routes = ('Distribution Centre Auckland',) + route + ('Distribution Centre Auckland',)
     coords_list = []
+    # loop through each store in route and take co-ords
     for store in dist_routes:
         coords_list.append([coords.loc[store,'Long'], coords.loc[store,'Lat']])
+    # get directions for heavy vehicles for each co-ord
     route_directions = client.directions(coordinates = coords_list, profile='driving-hgv', \
         format = 'geojson', validate = False)
+    # add to map
     folium.PolyLine(locations=[list(reversed(coord))for coord in route_directions['features'][0]['geometry']['coordinates']]).add_to(m)
     
+    # loop through each store again
     for store in dist_routes:
+        # set iconCol by type for eachstore
         if coords.loc[store,'Type'] == 'Countdown':
             iconCol = "green"
         elif coords.loc[store,'Type'] == 'FreshChoice':
@@ -74,9 +93,12 @@ def visualise(route, routeName, day):
             iconCol = "orange"
         elif coords.loc[store,'Type'] == 'Distribution Centre':
             iconCol = "black"
+        # take store co-ords
         coords_store = [coords.loc[store,'Lat'],coords.loc[store,'Long']]
+        # add marker for that location
         folium.Marker(coords_store, popup = coords.loc[store].name,\
             icon = folium.Icon(color = iconCol)).add_to(m)
+        # add name for that location
         folium.map.Marker(coords_store,\
             icon=DivIcon(size=(150,36),anchor=(100,0),html=store,\
                 style="""
@@ -88,10 +110,12 @@ def visualise(route, routeName, day):
                 )
             ).add_to(m)
 
+    #pathfile - create savename with the particular location and name
     if PATHFILE:
         savename = "code" + os.sep + "RouteMaps" + os.sep + day + os.sep + routeName + '.html'
     else:
         savename = "RouteMaps" + os.sep + day + os.sep + routeName + '.html'
+    # save map
     m.save(savename)
 
 def visual_all_routes(bestRoutes, day):
@@ -105,6 +129,7 @@ def visual_all_routes(bestRoutes, day):
                 'Week' or 'Saturday'
                 the type of day that we are running the program for
     """
+    #loops through each route and calls visualise 
     for i in range(0,len(bestRoutes)):
         visualise(bestRoutes[i], 'Route_'+str(i+1), day)
 
