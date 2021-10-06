@@ -1,3 +1,4 @@
+from typing import Mapping
 import numpy as np
 import pandas as pd
 import itertools as it
@@ -8,15 +9,12 @@ from generate_demands import *
 from route_visuals import *
 
 # if you are having file path problems change this
-PATHFILE = False
+PATHFILE = True
 
 def vehicleRoutingProblem(max, weekend = False, Mapping = False):
     """ solve a vehicle routing problem for specific demands and a maximum route size.
             Parameters:
             -----------
-            demand : int
-                specifies which set of demands (Weekday or Saturday).
-
             col : int
                 the maximum amount of stores per route.
             
@@ -34,8 +32,13 @@ def vehicleRoutingProblem(max, weekend = False, Mapping = False):
     totalTime = 0
 
     # read in demands
+<<<<<<< HEAD
     demands = readDemands(int(weekend))
     #demands = generate_demands(type = 'Ceil', Saturday=weekend)
+=======
+    # demands = readDemands(int(weekend))
+    demands = demandEstimation1(type = 'Ceil', Saturday=weekend)
+>>>>>>> 2adeddfbaeef85516c23580a8f902f073d0c6079
 
     # set regions depending on if weekend or weekday
     if weekend:
