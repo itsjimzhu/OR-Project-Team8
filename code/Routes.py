@@ -10,7 +10,7 @@ from route_visuals import *
 # if you are having file path problems change this
 PATHFILE = False
 
-def vehicleRoutingProblem(demand, max, weekend = False, Mapping = False):
+def vehicleRoutingProblem(max, weekend = False, Mapping = False):
     """ solve a vehicle routing problem for specific demands and a maximum route size.
             Parameters:
             -----------
@@ -34,7 +34,7 @@ def vehicleRoutingProblem(demand, max, weekend = False, Mapping = False):
     totalTime = 0
 
     # read in demands
-    demands = readDemands(demand)
+    demands = readDemands(int(weekend))
     #demands = generate_demands(type = 'Ceil', Saturday=weekend)
 
     # set regions depending on if weekend or weekday
@@ -536,7 +536,7 @@ def display (bestRoutes, bestTimes, totalTime):
 if __name__ == "__main__":
     start_time = time.time()
 
-    vehicleRoutingProblem('0', 3)
-    vehicleRoutingProblem('1', 3, True)
+    vehicleRoutingProblem(3)
+    vehicleRoutingProblem(3, True)
 
     print("Execution time --- %s seconds ---" % (time.time() - start_time))
