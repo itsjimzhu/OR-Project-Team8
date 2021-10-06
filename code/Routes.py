@@ -1,15 +1,15 @@
-from typing import Mapping
+
 import numpy as np
 import pandas as pd
 import itertools as it
-from pulp import *
 import os
-import time
 from generate_demands import *
 from route_visuals import *
+from pulp import *
+from typing import Mapping
 
 # if you are having file path problems change this
-PATHFILE = True
+PATHFILE = False
 
 def vehicleRoutingProblem(max, weekend = False, Mapping = False):
     """ solve a vehicle routing problem for specific demands and a maximum route size.
@@ -140,7 +140,7 @@ def readDemands(col):
     else:
         demands = pd.read_csv("data" + os.sep + "DemandEstimation.csv", index_col=0)
 
-    return demands[col]
+    return demands[str(col)]
 
 
 def selectRegion(region, Saturday=False):
@@ -529,12 +529,3 @@ def display (bestRoutes, bestTimes, totalTime):
     print("Total cost of all routes $", 225 * totalTime / 3600 , "\n\n")
 
     return
-
-
-if __name__ == "__main__":
-    start_time = time.time()
-
-    vehicleRoutingProblem(3)
-    vehicleRoutingProblem(3, True)
-
-    print("Execution time --- %s seconds ---" % (time.time() - start_time))

@@ -1,4 +1,5 @@
 # OR-Project-Team8
+
 ENGSCI 263 OR project; team 8
 
 Woolworths NZ would like us to determine a suitable truck logistics plan, such that costs are minimised. They have provided us with: 
@@ -22,3 +23,15 @@ Woolworths NZ would like us to determine a suitable truck logistics plan, such t
 ### Assume
 - Times between stores are unidirectional.
 - Demand of each weekday is averaged to find one mean value.
+
+### Notes
+ - You will need to insert your personal key to use route_visual
+
+### Functions
+ - Routes.py
+ - generate_demands.py
+ - route_visual.py
+ - main.py
+ - unit_tests.py
+ - routeSizeVis.py
+ 
